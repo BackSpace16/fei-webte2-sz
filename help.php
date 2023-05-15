@@ -33,14 +33,14 @@
                         if (!isset($_SESSION['id'])) {
                             echo '<a href="index.php" class="nav-link link-dark" aria-current="page">';
                             echo '<img class="icona" src="icons/person.svg" width="16" height="16">';
-                            echo 'Prihlásiť sa';                        }
+                            echo ' Prihlásiť sa';                        }
                         else {
                             if ($_SESSION['is_teacher'])
                                 echo '<a href="teacher.php" class="nav-link link-dark" aria-current="page">';
                             else
                                 echo '<a href="student.php" class="nav-link link-dark" aria-current="page">';
                             echo '<img class="icona" src="icons/home.svg" width="16" height="16">';
-                            echo 'Domov';  
+                            echo ' Domov';  
                         }
                     ?>
                     </a>

@@ -66,9 +66,6 @@
         }
     }
 
-    // TODO if prihlaseny -> redirect
-
-    // TODO validacia s db
 ?>
 
 <!DOCTYPE html>
