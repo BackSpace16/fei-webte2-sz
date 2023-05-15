@@ -1,11 +1,16 @@
 <?php
     session_start();
+    if (!isset($_SESSION['id'])) {
+        header('Location: index.php');
+    }
+    if ($_SESSION['isteacher']) {
+        header('Location: teacher.php');
+    }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>WEBTE2 | Záverečné zadanie</title>
+<title>WEBTE2 | Záverečné zadanie</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,22 +34,14 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <?php
-                        if (!isset($_SESSION['id'])) {
-                            echo '<a href="index.php" class="nav-link link-dark" aria-current="page">';
-                            echo '<img class="icona" src="icons/person.svg" width="16" height="16">';
-                            echo 'Prihlásiť sa';                        }
-                        else {
-                            echo '<a href="student.php" class="nav-link link-dark" aria-current="page">';
-                            echo '<img class="icona" src="icons/home.svg" width="16" height="16">';
-                            echo 'Domov';  
-                        }
-                    ?>
+                    <a href="index.php" class="nav-link active" aria-current="page">
+                        <img class="icona" src="icons/home_white.svg" width="16" height="16">
+                        Domov
                     </a>
                 </li>
                 <li>
-                    <a href="help.php" class="nav-link active">
-                        <img class="icona" src="icons/help_white.svg" width="16" height="16">
+                    <a href="help.php" class="nav-link link-dark">
+                        <img class="icona" src="icons/help.svg" width="16" height="16">
                         Návod
                     </a>
                 </li>
@@ -62,30 +59,22 @@
         </div>
 
         <div class="flex-column flex-shrink-0 bg-light smol-navbar">
-            <a href="index.php" class="d-block py-3 px-1 link-dark text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Olympijské hry">
+            <a href="index.php" class="d-block py-3 px-1 link-dark text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Domov">
                 <img src="img/logo.png" width="64" height="30">
             </a>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <?php
-                        if (!isset($_SESSION['id'])) {
-                            echo '<a href="index.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Prihlásiť sa" data-bs-original-title="Prihlásiť sa">';
-                            echo '<img src="icons/person.svg" width="24" height="24">';
-                        }
-                        else {
-                            echo '<a href="student.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">';
-                            echo '<img src="icons/home.svg" width="24" height="24">';
-                        }
-                    ?>
+                    <a href="index.php" class="nav-link active py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">
+                        <img src="icons/home_white.svg" width="24" height="24">
                     </a>
                 </li>
                 <li>
-                    <a href="help.php" class="nav-link active py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Návod" data-bs-original-title="Návod">
-                        <img src="icons/help_white.svg" width="24" height="24">
+                    <a href="help.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Návod" data-bs-original-title="Návod">
+                        <img src="icons/help.svg" width="24" height="24">
                     </a>
                 </li>
             </ul>
-
+            
             <?php
                 if (isset($_SESSION['id'])) {                    
                     echo '<div class="dropdown border-top">
@@ -98,14 +87,9 @@
         </div>
 
         <div class="content">
-        <div class="d-flex justify-content-center">
-            <div class="col-sm-10 col-11">
-                <div class="text-center">
-                    <h2>Návod na použitie</h2>
-                </div>
-                <hr>
-                <div>
-                    bla bla bla tba
+            <div class="d-flex justify-content-center">
+                <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                    Študent
                 </div>
             </div>
         </div>

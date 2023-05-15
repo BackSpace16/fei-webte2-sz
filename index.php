@@ -1,17 +1,72 @@
 <?php
-    // TODO if prihlaseny -> redirect
+    session_start();
+    if (isset($_SESSION['id'])) {
+        if ($_SESSION['isteacher']) {
+            header('Location: teacher.php');
+        }
+        else {
+            header('Location: student.php');
+        }
+    }
 
-    
+    require_once 'config.php';
+
+    function checkEmpty($field) {
+        if (empty(trim($field))) {
+            return true;
+        }
+        return false;
+    }
 
     $errMessage = null;
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        if (checkEmpty($_POST['name']) === true)
+        if (checkEmpty($_POST['username']) === true)
             $errMessage = "Zadajte meno.";
         if (checkEmpty($_POST['password']) === true)
             $errMessage = "Zadajte heslo.";
 
+        if ($errMessage == null) {
+            $sql = "SELECT * FROM users WHERE username = :username";
+            $stmt = $pdo->prepare($sql);
+
+            $stmt->bindParam(":username", $_POST["username"], PDO::PARAM_STR);
+
+            if ($stmt->execute() && $stmt->rowCount() == 1) {
+                $row = $stmt->fetch();
+                $hashed_password = $row["password"];
+                if (password_verify($_POST['password'], $hashed_password)) {
+
+                    $_SESSION["id"] = $row['id'];
+                    $_SESSION["name"] = $row['name'];
+                    $_SESSION["surname"] = $row['surname'];
+                    if ($row['surname'] == null)
+                        $_SESSION["fullname"] = $row['name'];
+                    else
+                        $_SESSION["fullname"] = $row['name']." ".$row['surname'];
+                    $_SESSION["is_teacher"] = $row['is_teacher'];
+                    $_SESSION["picture"] = "img/user.png";
+
+                    $id = $row['id'];
+
+                    unset($stmt);
+
+                    if ($_SESSION["is_teacher"])
+                        header("location: teacher.php?s=1");
+                    else
+                        header("location: student.php?s=1");
+                }
+                else {
+                    $errMessage = "Nesprávne meno alebo heslo.";
+                }
+            }
+            else {
+                $errMessage = "Nesprávne meno alebo heslo.";
+            }
+        }
     }
+
+    // TODO if prihlaseny -> redirect
 
     // TODO validacia s db
 ?>
@@ -59,18 +114,18 @@
         </div>
 
         <div class="flex-column flex-shrink-0 bg-light smol-navbar">
-            <a href="index.php" class="d-block py-3 px-1 link-dark text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Olympijské hry">
-                <img src="or.svg" width="64" height="30">
+            <a href="index.php" class="d-block py-3 px-1 link-dark text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Domov">
+                <img src="img/logo.png" width="64" height="30">
             </a>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link active py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Prehľad" data-bs-original-title="Prehľad">
-                        <img src="table_white.svg" width="24" height="24">
+                    <a href="index.php" class="nav-link active py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Prihlásiť sa" data-bs-original-title="Prihlásiť sa">
+                        <img src="icons/person_white.svg" width="24" height="24">
                     </a>
                 </li>
                 <li>
-                    <a href="people.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Športovci" data-bs-original-title="Športovci">
-                        <img src="person.svg" width="24" height="24">
+                    <a href="help.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Návod" data-bs-original-title="Návod">
+                        <img src="icons/help.svg" width="24" height="24">
                     </a>
                 </li>
             </ul>
@@ -92,9 +147,9 @@
                     }
                 ?> 
                 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" onsubmit="return registerFormValidate()">
-                    <label for="name"><h5>Meno</h5></label>
+                    <label for="username"><h5>Meno</h5></label>
                     <div class="input-group input-group-lg w-100" id="form-name">
-                        <input required class="form-control w-100" oninput="textValid(this)" value="<?php if(isset($_POST['name'])) echo $_POST['name']; ?>" type="text" name="name" id="name">
+                        <input required class="form-control w-100" oninput="textValid(this)" value="<?php if(isset($_POST['username'])) echo $_POST['username']; ?>" type="text" name="username" id="username">
                     </div>
                     <label for="password" class="pt-2"><h5>Heslo</h5></label>
                     <div class="input-group input-group-lg w-100" id="form-password"> 
