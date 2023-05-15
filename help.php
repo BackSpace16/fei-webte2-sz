@@ -35,7 +35,10 @@
                             echo '<img class="icona" src="icons/person.svg" width="16" height="16">';
                             echo 'Prihlásiť sa';                        }
                         else {
-                            echo '<a href="student.php" class="nav-link link-dark" aria-current="page">';
+                            if ($_SESSION['is_teacher'])
+                                echo '<a href="teacher.php" class="nav-link link-dark" aria-current="page">';
+                            else
+                                echo '<a href="student.php" class="nav-link link-dark" aria-current="page">';
                             echo '<img class="icona" src="icons/home.svg" width="16" height="16">';
                             echo 'Domov';  
                         }
@@ -73,7 +76,10 @@
                             echo '<img src="icons/person.svg" width="24" height="24">';
                         }
                         else {
-                            echo '<a href="student.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">';
+                            if ($_SESSION['is_teacher'])
+                                echo '<a href="teacher.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">';
+                            else
+                                echo '<a href="student.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">';
                             echo '<img src="icons/home.svg" width="24" height="24">';
                         }
                     ?>

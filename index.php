@@ -1,7 +1,7 @@
 <?php
     session_start();
     if (isset($_SESSION['id'])) {
-        if ($_SESSION['isteacher']) {
+        if ($_SESSION['is_teacher']) {
             header('Location: teacher.php');
         }
         else {

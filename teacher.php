@@ -3,8 +3,8 @@
     if (!isset($_SESSION['id'])) {
         header('Location: index.php');
     }
-    if ($_SESSION['is_teacher']) {
-        header('Location: teacher.php');
+    if (!$_SESSION['is_teacher']) {
+        header('Location: student.php');
     }
 ?>
 <!DOCTYPE html>
@@ -89,7 +89,7 @@
         <div class="content">
             <div class="d-flex justify-content-center">
                 <div class="col-lg-4 col-md-6 col-sm-8 col-10">
-                    Študent
+                    Učiteľ
                 </div>
             </div>
         </div>
