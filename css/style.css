@@ -1,0 +1,58 @@
+body {
+    margin: 0;
+}
+
+input {
+    width: 100%;
+}
+
+
+.page {
+    width: 100%;
+    margin-left: 280px;
+    float: right;
+}
+
+.content {
+    margin-top: 4rem;
+    margin-left: 280px;
+    margin-bottom: 4rem;
+}
+
+.smol-navbar {
+    width: 4.5rem;
+    display: none!important;
+}
+
+.dropdown-name {
+    font-weight: bolder;
+}
+
+.big-navbar {
+    width: 280px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    float: left;
+}
+
+.icona {
+    margin-bottom: 0.25rem;
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 1199.98px) {
+    .big-navbar {
+        display: none;
+    }
+    .smol-navbar {
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        float: left;
+        display: flex!important;
+    }
+    .content {
+        margin-left: 4.5rem;
+    }
+}
