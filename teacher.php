@@ -89,62 +89,6 @@
         <div class="content">
             <div class="d-flex justify-content-center">
                 <div class="col-lg-7 col-md-6 col-sm-8 col-10">
-                <?php
-                    // Cesta k adresáru so súbormi
-                    $cestaSuborov = 'zaverecne_zadanie/';
-
-                    // Získanie všetkých .tex súborov v priečinku
-                    $zoznamSuborov = glob($cestaSuborov . '*.tex');
-
-                    // Regulárny výraz na vyhľadanie sekcií s príkladmi
-                    $regex = '/\\\\section\*\{(.+?)\}.*?\\\\begin\{task\}(.*?)\\\\end\{task\}.*?\\\\begin\{solution\}(.*?)\\\\end\{solution\}/s';
-
-                    // Inicializácia pola pre vzorce, riešenia a blokové schémy
-                    $vzorce = array();
-                    $riesenia = array();
-                    $blokoveSchema = array();
-
-                    // Prechádzanie všetkých súborov
-                    foreach ($zoznamSuborov as $subor) {
-                        // Načítanie obsahu súboru
-                        $obsah = file_get_contents($subor);
-
-                        // Nájdenie všetkých príkladov v súbore
-                        preg_match_all($regex, $obsah, $vysledok, PREG_SET_ORDER);
-
-                        // Prechádzanie cez všetky nájdené príklady
-                        foreach ($vysledok as $index => $prklad) {
-                            $cisloPrkladu = $prklad[1];
-                            $uloha = $prklad[2];
-                            $riesenie = $prklad[3];
-
-                            // Odstrániť "$" zo vzorcov úlohy a riešenia
-                            $uloha = str_replace('$', '', $uloha);
-                            $riesenie = str_replace('$', '', $riesenie);
-
-                            // Získať názov obrázka z úlohy
-                            preg_match('/\\\\includegraphics{.*?\/(.*?)}/', $uloha, $obrazokVysledok);
-                            $obrazok = $obrazokVysledok[1];
-
-                            // Odstrániť "includegraphics" zo začiatku názvu obrázka v úlohe
-                            $uloha = preg_replace('/\\\\includegraphics{.*?\/(.*?)}/', '', $uloha);
-
-                            // Ak nie je definovaná bloková schéma, pridaj hodnotu "žiadna schéma"
-                            if (empty($obrazok)) {
-                                $blokoveSchema[] = 'žiadna schéma';
-                            } else {
-                                $blokoveSchema[] = $cestaSuborov . $obrazok;
-                            }
-
-                            // Pridať úlohu a riešenie do príslušných polí
-                            $vzorce[] = array(
-                                'subor' => $cisloPrkladu,
-                                'uloha' => trim($uloha)
-                            );
-                            $riesenia[] = trim($riesenie);
-                        }
-                    }
-                    ?>
                         <style>
                             table {
                                 border-collapse: collapse;
@@ -235,7 +179,68 @@
                                 table.style.display = table.style.display === "none" ? "table" : "none";
                             }
                         </script>
-                        <h1>Všetky príklady</h1>
+                        
+                        <?php
+                            
+                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
+                                
+                                $uploadedFile = $_FILES['uploaded_file'];
+                               
+                                $regex = '/\\\\section\*\{(.+?)\}.*?\\\\begin\{task\}(.*?)\\\\end\{task\}.*?\\\\begin\{solution\}(.*?)\\\\end\{solution\}/s';
+
+                    
+                    $vzorce = array();
+                    $riesenia = array();
+                    $blokoveSchema = array();
+
+                    
+                        $obsah = file_get_contents($uploadedFile['tmp_name']);
+
+                        
+                        preg_match_all($regex, $obsah, $vysledok, PREG_SET_ORDER);
+                        
+                        // Prechádzanie cez všetky nájdené príklady
+                        foreach ($vysledok as $index => $prklad) {
+                            $cisloPrkladu = $prklad[1];
+                            $uloha = $prklad[2];
+                            $riesenie = $prklad[3];
+
+                            // Odstrániť "$" zo vzorcov úlohy a riešenia
+                            $uloha = str_replace('$', '', $uloha);
+                            $riesenie = str_replace('$', '', $riesenie);
+
+                            // Získať názov obrázka z úlohy
+                            preg_match('/\\\\includegraphics{.*?\/(.*?)}/', $uloha, $obrazokVysledok);
+                            $obrazok = $obrazokVysledok[1];
+
+                            // Odstrániť "includegraphics" zo začiatku názvu obrázka v úlohe
+                            $uloha = preg_replace('/\\\\includegraphics{.*?\/(.*?)}/', '', $uloha);
+
+                            // Ak nie je definovaná bloková schéma, pridaj hodnotu "žiadna schéma"
+                            if (empty($obrazok)) {
+                                $blokoveSchema[] = 'žiadna schéma';
+                            } else {
+                                $blokoveSchema[] = $cestaSuborov . $obrazok;
+                            }
+
+                            // Pridať úlohu a riešenie do príslušných polí
+                            $vzorce[] = array(
+                                'subor' => $cisloPrkladu,
+                                'uloha' => trim($uloha)
+                            );
+                            $riesenia[] = trim($riesenie);
+                                
+                            }}
+?>
+                       
+                       
+                       <form method="POST" enctype="multipart/form-data">
+                            <label for="file">Select a file:</label>
+                            <input type="file" id="file" name="uploaded_file" required>
+                            <br><br>
+                            <button type="submit">Upload</button>
+
+                            <h1>Všetky príklady</h1>
                         <button id="toggle-button" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
 
                         <table id="prklady-table" style="display:none;">
@@ -264,19 +269,27 @@
                                     $Muloha = str_replace($tags,"", $uloha);
                                     $Mriesenie = substr($riesenie, 18, -15);
 
-                                    $sql = "INSERT INTO tasks (name, description, image, solution) VALUES (:name,:description,:image,:solution)";
-                                    $stmt = $pdo->prepare($sql);
-                                    
 
-                                    // Bind the variables to the prepared statement as parameters
-                                    
-                                    $stmt->bindParam(":name", $cisloPrkladu, PDO::PARAM_STR);
-                                    $stmt->bindParam(":description", $Muloha, PDO::PARAM_STR);
-                                    $stmt->bindParam(":image", $obrazok, PDO::PARAM_STR);
-                                    $stmt->bindParam(":solution", $Mriesenie, PDO::PARAM_STR);
-                                
-                                    // Execute the statement
-                                    $stmt->execute();
+
+                                    $sqlCheck = "SELECT COUNT(*) FROM tasks WHERE name = :name";
+                                        $stmtCheck = $pdo->prepare($sqlCheck);
+                                        $stmtCheck->bindParam(":name", $cisloPrkladu, PDO::PARAM_STR);
+                                        $stmtCheck->execute();
+                                        $count = $stmtCheck->fetchColumn();
+
+
+
+
+                                     if ($count == 0) {
+                                        // Insert a new task if it doesn't exist
+                                        $sqlInsert = "INSERT INTO tasks (name, description, image, solution) VALUES (:name, :description, :image, :solution)";
+                                        $stmtInsert = $pdo->prepare($sqlInsert);
+                                        $stmtInsert->bindParam(":name", $cisloPrkladu, PDO::PARAM_STR);
+                                        $stmtInsert->bindParam(":description", $Muloha, PDO::PARAM_STR);
+                                        $stmtInsert->bindParam(":image", $obrazok, PDO::PARAM_STR);
+                                        $stmtInsert->bindParam(":solution", $Mriesenie, PDO::PARAM_STR);
+                                        $stmtInsert->execute();
+                                    }
                                     
                                     
                                     echo "<tr>";
@@ -292,6 +305,8 @@
                                 ?>
                             </tbody>
                         </table>
+
+
 
                         <!-- Modal -->
                         <div id="modal" class="modal">
