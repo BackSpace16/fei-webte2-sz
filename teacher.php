@@ -88,207 +88,207 @@
 
         <div class="content">
             <div class="d-flex justify-content-center">
-                <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                <div class="col-lg-7 col-md-6 col-sm-8 col-10">
                 <?php
-// Cesta k adresáru so súbormi
-$cestaSuborov = 'zaverecne_zadanie/';
+                    // Cesta k adresáru so súbormi
+                    $cestaSuborov = 'zaverecne_zadanie/';
 
-// Získanie všetkých .tex súborov v priečinku
-$zoznamSuborov = glob($cestaSuborov . '*.tex');
+                    // Získanie všetkých .tex súborov v priečinku
+                    $zoznamSuborov = glob($cestaSuborov . '*.tex');
 
-// Regulárny výraz na vyhľadanie sekcií s príkladmi
-$regex = '/\\\\section\*\{(.+?)\}.*?\\\\begin\{task\}(.*?)\\\\end\{task\}.*?\\\\begin\{solution\}(.*?)\\\\end\{solution\}/s';
+                    // Regulárny výraz na vyhľadanie sekcií s príkladmi
+                    $regex = '/\\\\section\*\{(.+?)\}.*?\\\\begin\{task\}(.*?)\\\\end\{task\}.*?\\\\begin\{solution\}(.*?)\\\\end\{solution\}/s';
 
-// Inicializácia pola pre vzorce, riešenia a blokové schémy
-$vzorce = array();
-$riesenia = array();
-$blokoveSchema = array();
+                    // Inicializácia pola pre vzorce, riešenia a blokové schémy
+                    $vzorce = array();
+                    $riesenia = array();
+                    $blokoveSchema = array();
 
-// Prechádzanie všetkých súborov
-foreach ($zoznamSuborov as $subor) {
-    // Načítanie obsahu súboru
-    $obsah = file_get_contents($subor);
+                    // Prechádzanie všetkých súborov
+                    foreach ($zoznamSuborov as $subor) {
+                        // Načítanie obsahu súboru
+                        $obsah = file_get_contents($subor);
 
-    // Nájdenie všetkých príkladov v súbore
-    preg_match_all($regex, $obsah, $vysledok, PREG_SET_ORDER);
+                        // Nájdenie všetkých príkladov v súbore
+                        preg_match_all($regex, $obsah, $vysledok, PREG_SET_ORDER);
 
-    // Prechádzanie cez všetky nájdené príklady
-    foreach ($vysledok as $index => $prklad) {
-        $cisloPrkladu = $prklad[1];
-        $uloha = $prklad[2];
-        $riesenie = $prklad[3];
+                        // Prechádzanie cez všetky nájdené príklady
+                        foreach ($vysledok as $index => $prklad) {
+                            $cisloPrkladu = $prklad[1];
+                            $uloha = $prklad[2];
+                            $riesenie = $prklad[3];
 
-        // Odstrániť "$" zo vzorcov úlohy a riešenia
-        $uloha = str_replace('$', '', $uloha);
-        $riesenie = str_replace('$', '', $riesenie);
+                            // Odstrániť "$" zo vzorcov úlohy a riešenia
+                            $uloha = str_replace('$', '', $uloha);
+                            $riesenie = str_replace('$', '', $riesenie);
 
-        // Získať názov obrázka z úlohy
-        preg_match('/\\\\includegraphics{.*?\/(.*?)}/', $uloha, $obrazokVysledok);
-        $obrazok = $obrazokVysledok[1];
+                            // Získať názov obrázka z úlohy
+                            preg_match('/\\\\includegraphics{.*?\/(.*?)}/', $uloha, $obrazokVysledok);
+                            $obrazok = $obrazokVysledok[1];
 
-        // Odstrániť "includegraphics" zo začiatku názvu obrázka v úlohe
-        $uloha = preg_replace('/\\\\includegraphics{.*?\/(.*?)}/', '', $uloha);
+                            // Odstrániť "includegraphics" zo začiatku názvu obrázka v úlohe
+                            $uloha = preg_replace('/\\\\includegraphics{.*?\/(.*?)}/', '', $uloha);
 
-        // Ak nie je definovaná bloková schéma, pridaj hodnotu "žiadna schéma"
-        if (empty($obrazok)) {
-            $blokoveSchema[] = 'žiadna schéma';
-        } else {
-            $blokoveSchema[] = $cestaSuborov . $obrazok;
-        }
+                            // Ak nie je definovaná bloková schéma, pridaj hodnotu "žiadna schéma"
+                            if (empty($obrazok)) {
+                                $blokoveSchema[] = 'žiadna schéma';
+                            } else {
+                                $blokoveSchema[] = $cestaSuborov . $obrazok;
+                            }
 
-        // Pridať úlohu a riešenie do príslušných polí
-        $vzorce[] = array(
-            'subor' => $cisloPrkladu,
-            'uloha' => trim($uloha)
-        );
-        $riesenia[] = trim($riesenie);
-    }
-}
-?>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 90%;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-            white-space: normal;
-            word-wrap: break-word;
-        }
-        .mathjax-equation {
-            max-width: 200px;
-            overflow: hidden;
-            white-space: normal;
-            word-wrap: break-word;
-        }
-        .image-cell img {
-            max-width: 100px;
-            height: auto;
-            cursor: pointer;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            padding-top: 30px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80%;
-        }
-        .modal-content img {
-            width: 100%;
-            height: auto;
-        }
-        .close {
-            color: #fff;
-            position: absolute;
-            top: 10px;
-            right: 25px;
-            font-size: 35px;
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-        .close:hover {
-            color: #bbb;
-        }
-    </style>
-    <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script> -->
-    <script>
-        // Function to open modal
-        function openModal(imageSrc) {
-            var modal = document.getElementById("modal");
-            var modalImg = document.getElementById("modal-image");
-            modal.style.display = "block";
-            modalImg.src = imageSrc;
-        }
-        // Function to close modal
-        function closeModal() {
-            var modal = document.getElementById("modal");
-            modal.style.display = "none";
-        }
+                            // Pridať úlohu a riešenie do príslušných polí
+                            $vzorce[] = array(
+                                'subor' => $cisloPrkladu,
+                                'uloha' => trim($uloha)
+                            );
+                            $riesenia[] = trim($riesenie);
+                        }
+                    }
+                    ?>
+                        <style>
+                            table {
+                                border-collapse: collapse;
+                                width: 90%;
+                            }
+                            th, td {
+                                border: 1px solid black;
+                                padding: 8px;
+                                text-align: left;
+                                white-space: normal;
+                                word-wrap: break-word;
+                            }
+                            .mathjax-equation {
+                                max-width: 200px;
+                                overflow: hidden;
+                                white-space: normal;
+                                word-wrap: break-word;
+                            }
+                            .image-cell img {
+                                max-width: 100px;
+                                height: auto;
+                                cursor: pointer;
+                            }
+                            .modal {
+                                display: none;
+                                position: fixed;
+                                z-index: 999;
+                                padding-top: 30px;
+                                left: 0;
+                                top: 0;
+                                width: 100%;
+                                height: 100%;
+                                overflow: auto;
+                                background-color: rgba(0, 0, 0, 0.8);
+                            }
+                            .modal-content {
+                                margin: auto;
+                                display: block;
+                                width: 80%;
+                                max-width: 800px;
+                                max-height: 80%;
+                            }
+                            .modal-content img {
+                                width: 100%;
+                                height: auto;
+                            }
+                            .close {
+                                color: #fff;
+                                position: absolute;
+                                top: 10px;
+                                right: 25px;
+                                font-size: 35px;
+                                font-weight: bold;
+                                transition: 0.3s;
+                                cursor: pointer;
+                            }
+                            .close:hover {
+                                color: #bbb;
+                            }
+                        </style>
+                        <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+                        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script> -->
+                        <script>
+                            // Function to open modal
+                            function openModal(imageSrc) {
+                                var modal = document.getElementById("modal");
+                                var modalImg = document.getElementById("modal-image");
+                                modal.style.display = "block";
+                                modalImg.src = imageSrc;
+                            }
+                            // Function to close modal
+                            function closeModal() {
+                                var modal = document.getElementById("modal");
+                                modal.style.display = "none";
+                            }
 
-        // Event listener to close modal on click outside the image
-        window.addEventListener("click", function(event) {
-            var modal = document.getElementById("modal");
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
+                            // Event listener to close modal on click outside the image
+                            window.addEventListener("click", function(event) {
+                                var modal = document.getElementById("modal");
+                                if (event.target === modal) {
+                                    closeModal();
+                                }
+                            });
 
-        // Function to toggle table visibility
-        function toggleTable() {
-            var table = document.getElementById("prklady-table");
-            table.style.display = table.style.display === "none" ? "table" : "none";
-        }
-    </script>
-    <h1>Všetky príklady</h1>
-    <button id="toggle-button" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
+                            // Function to toggle table visibility
+                            function toggleTable() {
+                                var table = document.getElementById("prklady-table");
+                                table.style.display = table.style.display === "none" ? "table" : "none";
+                            }
+                        </script>
+                        <h1>Všetky príklady</h1>
+                        <button id="toggle-button" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
 
-    <table id="prklady-table" style="display:none;">
-        <thead>
-            <tr>
-                <th>Číslo príkladu</th>
-                <th>Vzorec</th>
-                <th>Riešenie</th>
-                <th>Bloková schéma</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            // Prechádzanie cez všetky nájdené príklady
-            foreach ($vzorce as $index => $prklad) {
-                $cisloPrkladu = $prklad['subor'];
-                $uloha = $prklad['uloha'];
-                $riesenie = $riesenia[$index];
-                $obrazok = $blokoveSchema[$index];
+                        <table id="prklady-table" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Číslo príkladu</th>
+                                    <th>Vzorec</th>
+                                    <th>Riešenie</th>
+                                    <th>Bloková schéma</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                // Prechádzanie cez všetky nájdené príklady
+                                foreach ($vzorce as $index => $prklad) {
+                                    $cisloPrkladu = $prklad['subor'];
+                                    $uloha = $prklad['uloha'];
+                                    $riesenie = $riesenia[$index];
+                                    $obrazok = $blokoveSchema[$index];
 
-               
-                $Muloha = str_replace("\begin{equation*}\end{equation*}", "", $uloha);
+                                
+                                    $Muloha = str_replace("\begin{equation*}\end{equation*}", "", $uloha);
 
-                $Mriesenie = substr($riesenie, 18, -15);
+                                    $Mriesenie = substr($riesenie, 18, -15);
 
-                
-                
-                echo "<tr>";
-                echo "<td>$cisloPrkladu</td>";
-                echo "<td class=\"mathjax-equation\">" . trim($Muloha) . "</td>";
-                echo "<td class=\"mathjax-equation\">" . trim($Mriesenie) . "</td>";
-                echo "<td class=\"image-cell\">" . ($obrazok !== 'žiadna schéma' ? "<img src=\"$obrazok\" alt=\"bloková schéma\" onclick=\"openModal('$obrazok')\">" : "žiadna schéma") . "</td>";
-                echo "</tr>";
-            }
-            ?>
-        </tbody>
-    </table>
+                                    
+                                    
+                                    echo "<tr>";
+                                    echo "<td>$cisloPrkladu</td>";
+                                    echo "<td class=\"mathjax-equation\">" . trim($Muloha) . "</td>";
+                                    echo "<td class=\"mathjax-equation\">" . trim($Mriesenie) . "</td>";
+                                    echo "<td class=\"image-cell\">" . ($obrazok !== 'žiadna schéma' ? "<img src=\"$obrazok\" alt=\"bloková schéma\" onclick=\"openModal('$obrazok')\">" : "žiadna schéma") . "</td>";
+                                    echo "</tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
 
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="modal-image">
-    </div>
+                        <!-- Modal -->
+                        <div id="modal" class="modal">
+                            <span class="close" onclick="closeModal()">&times;</span>
+                            <img class="modal-content" id="modal-image">
+                        </div>
 
-    <script>
-        // MathJax configuration and rendering
-        MathJax.Hub.Config({
-            tex2jax: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        });
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    </script>
+                        <script>
+                            // MathJax configuration and rendering
+                            MathJax.Hub.Config({
+                                tex2jax: {
+                                    inlineMath: [['$', '$'], ['\\(', '\\)']]
+                                }
+                            });
+                            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                        </script>
 
                 </div>
             </div>
