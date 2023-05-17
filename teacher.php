@@ -257,13 +257,14 @@
                                     $riesenie = $riesenia[$index];
                                     $obrazok = $blokoveSchema[$index];
 
-                                    $ulohaa = $prklad['uloha'];
+                                    //$ulohaa = $prklad['uloha'];
                                     
                                     //modifikovana uloha aj riesenie... upraveny string kvoli vypisu
-                                    $Muloha = str_replace("\begin{equation*}\end{equation*}", "", $ulohaa);
+                                    $tags = array("\begin{equation*}","end{equation*}","\\");
+                                    $Muloha = str_replace($tags,"", $uloha);
                                     $Mriesenie = substr($riesenie, 18, -15);
 
-                                    $sql = "INSERT INTO taskss (name, description, image, solution) VALUES (:name,:description,:image,:solution)";
+                                    $sql = "INSERT INTO tasks (name, description, image, solution) VALUES (:name,:description,:image,:solution)";
                                     $stmt = $pdo->prepare($sql);
                                     
 
@@ -287,7 +288,7 @@
                                 
                                     
                                 }
-                                unset($stmt);
+                                //unset($stmt);
                                 ?>
                             </tbody>
                         </table>
