@@ -233,15 +233,22 @@
                             }}
 ?>
                        
-                       
-                       <form method="POST" enctype="multipart/form-data">
-                            <label for="file">Select a file:</label>
-                            <input type="file" id="file" name="uploaded_file" required>
-                            <br><br>
-                            <button type="submit">Upload</button>
+                       <div class="row">
+                        <h3>Nahratie súboru:</h3>
+                            <div class="col-sm">
+                            <form method="POST" enctype="multipart/form-data">
+                            <!-- <label for="file">Select a file:</label> -->
+                            <input type="file" class="form-control" id="file" name="uploaded_file" required>
+                            </div>
+                            <div class="col-sm">
+                            <button type="submit" class="btn btn-primary">Nahrať súbor</button>
+                            </div>
+                       </div>
+                        
+                       <br>
 
-                            <h1>Všetky príklady</h1>
-                        <button id="toggle-button" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
+                            <h3>Tabuľka príkladov: </h3>
+                        <button id="toggle-button" class="btn btn-primary" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
 
                         <table id="prklady-table" style="display:none;">
                             <thead>
