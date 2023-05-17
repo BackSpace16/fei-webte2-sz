@@ -1,3 +1,3 @@
 <?php
-    echo"ano";
+    echo"ano fungujem";
 ?>
