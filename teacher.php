@@ -249,6 +249,7 @@
                             </thead>
                             <tbody>
                                 <?php
+                                include('config.php');
                                 // Prechádzanie cez všetky nájdené príklady
                                 foreach ($vzorce as $index => $prklad) {
                                     $cisloPrkladu = $prklad['subor'];
@@ -256,11 +257,25 @@
                                     $riesenie = $riesenia[$index];
                                     $obrazok = $blokoveSchema[$index];
 
-                                
-                                    $Muloha = str_replace("\begin{equation*}\end{equation*}", "", $uloha);
-
+                                    $ulohaa = $prklad['uloha'];
+                                    
+                                    //modifikovana uloha aj riesenie... upraveny string kvoli vypisu
+                                    $Muloha = str_replace("\begin{equation*}\end{equation*}", "", $ulohaa);
                                     $Mriesenie = substr($riesenie, 18, -15);
 
+                                    $sql = "INSERT INTO taskss (name, description, image, solution) VALUES (:name,:description,:image,:solution)";
+                                    $stmt = $pdo->prepare($sql);
+                                    
+
+                                    // Bind the variables to the prepared statement as parameters
+                                    
+                                    $stmt->bindParam(":name", $cisloPrkladu, PDO::PARAM_STR);
+                                    $stmt->bindParam(":description", $Muloha, PDO::PARAM_STR);
+                                    $stmt->bindParam(":image", $obrazok, PDO::PARAM_STR);
+                                    $stmt->bindParam(":solution", $Mriesenie, PDO::PARAM_STR);
+                                
+                                    // Execute the statement
+                                    $stmt->execute();
                                     
                                     
                                     echo "<tr>";
@@ -269,7 +284,10 @@
                                     echo "<td class=\"mathjax-equation\">" . trim($Mriesenie) . "</td>";
                                     echo "<td class=\"image-cell\">" . ($obrazok !== 'žiadna schéma' ? "<img src=\"$obrazok\" alt=\"bloková schéma\" onclick=\"openModal('$obrazok')\">" : "žiadna schéma") . "</td>";
                                     echo "</tr>";
+                                
+                                    
                                 }
+                                unset($stmt);
                                 ?>
                             </tbody>
                         </table>
