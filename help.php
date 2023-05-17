@@ -17,6 +17,15 @@
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.3/datatables.min.css" rel="stylesheet"/>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.3/datatables.min.js"></script>
+     <!-- PDF-generate -->
+     <script src=
+ "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+
+
 
     <link href="css/style.css" rel="stylesheet"/>
 </head>
@@ -102,19 +111,35 @@
                 }
             ?>
         </div>
-
-        <div class="content">
+        
+        <div class="content" >
         <div class="d-flex justify-content-center">
             <div class="col-sm-10 col-11">
                 <div class="text-center">
                     <h2>Návod na použitie</h2>
                 </div>
                 <hr>
-                <div>
+                <div id="contentToConvert">
                     bla bla bla tba
                 </div>
+                
             </div>
         </div>
     </div>
+    <div class="d-flex justify-content-center">
+    <button class="btn btn-primary btn-sm" onclick="generatePDF()">Create PDF</button>
+</div>
+
+  
+    <script type="text/javascript">
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const content = document.getElementById('contentToConvert').innerHTML;
+            doc.text(content, 15, 15, { 'width': 170 });
+            doc.save("newFile.pdf");               
+        }           
+    </script> 
+
 </body>
 </html>
