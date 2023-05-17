@@ -312,7 +312,24 @@
                                 ?>
                             </tbody>
                         </table>
+                        <?php
+                            include('config.php');
 
+                            // Select all students from the users table with the role "Student"
+                            $sqlStudents = "SELECT * FROM users WHERE name = 'Študent'";
+                            $stmtStudents = $pdo->prepare($sqlStudents);
+                            $stmtStudents->execute();
+                            $students = $stmtStudents->fetchAll(PDO::FETCH_ASSOC);
+                            ?>
+
+                            <!-- Generate the <select> tag with student options -->
+                            <select name="student">
+                            <?php foreach ($students as $student): ?>
+                                <option value="<?php echo $student['id']; ?>">
+                                <?php echo $student['username']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                            </select>
 
 
                         <!-- Modal -->
