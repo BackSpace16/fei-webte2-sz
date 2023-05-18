@@ -1,11 +1,32 @@
 <?php
+    ini_set('display_errors',1);
+    ini_set('display_startup_errors',1);
+    error_reporting(E_ALL);
+
     session_start();
+
     if (!isset($_SESSION['id'])) {
         header('Location: index.php');
     }
     if ($_SESSION['is_teacher']) {
         header('Location: teacher.php');
     }
+
+    require_once 'config.php';
+
+    $errMessage = null;
+    $sql = "SELECT * FROM tests LEFT JOIN taskgroups ON tests.task_group = taskgroups.id WHERE tests.student = :student ORDER BY tests.created DESC";
+    $stmt = $pdo->prepare($sql);
+
+    $stmt->bindParam(":student", $_SESSION["id"], PDO::PARAM_STR);
+
+    if ($stmt->execute()) {
+        $tests = $stmt->fetchAll();
+    }
+    else {
+        $errMessage = "Chyba v spojení s databázou.";
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,8 +109,56 @@
 
         <div class="content">
             <div class="d-flex justify-content-center">
-                <div class="col-lg-4 col-md-6 col-sm-8 col-10">
-                    Študent
+                <div class="col-sm-10 col-11">
+                    <table class="col-12">
+                        <tr class="col-12 p-3 text-center">
+                            <th class="col-3 ps-3"><h4>Test</h4></th>
+                            <th class="col-3"><h4>Hodnotenie</h4></th>
+                            <th class="col-3"><h4>Vytvorené</h4></th>
+                            <th class="col-3 pe-3"><h4>Odovzdané</h4></th>
+                        </tr>
+                    </table>
+                    <hr>
+                    <?php
+                        foreach($tests as $test) {
+                            if ($test["submitted"] != null && $test["points"] != null) {
+                                echo '<div class="alert alert-dark d-flex mb-2" role="alert">
+                                        <div class="col-3 text-start">
+                                            '.$test["name"].'
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            '.$test["points"].' / '.$test["points_available"].'
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            '.$test["created"].'
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            '.$test["submitted"].'
+                                        </div>
+                                    </div>';
+                            }
+                            else {
+                                echo '<div class="alert alert-success d-flex mb-2" role="alert">
+                                        <div class="col-3 text-start">
+                                            '.$test["name"].'
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            Neodovzdané
+                                        </div>
+                                        <div class="col-3 text-center">
+                                            '.$test["created"].'
+                                        </div>
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <div class="col-8">
+                                                <form action="">
+                                                    <input type="button" class="btn btn-sm btn-primary" value="Odovzdať">
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>';
+                            }
+                        }
+                    ?>
                 </div>
             </div>
         </div>
