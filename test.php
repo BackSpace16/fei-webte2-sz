@@ -14,7 +14,7 @@
 
     require_once 'config.php';
 
-    $sql = "SELECT * FROM tests WHERE id = :id";
+    $sql = "SELECT * FROM tests LEFT JOIN tasks ON tests.task = tasks.id LEFT JOIN taskgroups ON tests.task_group = taskgroups.id WHERE tests.id = :id";
     $stmt = $pdo->prepare($sql);
 
     $stmt->bindParam(":id", $_GET["t"], PDO::PARAM_STR);
@@ -44,7 +44,9 @@
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.3/datatables.min.css" rel="stylesheet"/>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.3/datatables.min.js"></script>
-
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link href="css/style.css" rel="stylesheet"/>
 </head>
 <body>
@@ -111,9 +113,49 @@
         <div class="content">
             <div class="d-flex justify-content-center">
                 <div class="col-sm-10 col-11">
+                    <div class="d-flex">
+                        <h2 class="col-8"><?php
+                            echo $test['name'];
+                        ?></h2>
+                        <h5 class="col-4 text-end"><?php
+                            $date = new DateTimeImmutable($test['created']);
+                            echo 'Vytvorené: '.$date->format('d. m. Y H:i');
+                        ?></h5>
+                    </div>
+                    <hr>
                     <?php
-                        var_dump($test);
+                        echo '<div>'.$test['description'].'</div>';
+                        echo '<div class="d-flex justify-content-center"><img src="data:image/png;charset=utf8;base64,'.base64_encode($test['image']).'" alt=""></div>';
                     ?>
+                    <hr>
+                    <?php if($test['submitted'] != null && $test['points'] != null){?>
+                    <div class="d-flex">
+                        <div class="col-9 d-flex">
+                            <div class="col-2 text-end">
+                                <?php echo 'Vaša odpoveď:'; ?>
+                            </div>
+                            <div class="col-4 text-center">
+                                <?php echo '\('.$test['students_solution'].'\)'; ?>
+                            </div>
+                            <div class="col-2 text-end">
+                                <?php echo 'Správna odpoveď:'; ?>
+                            </div>
+                            <div class="col-4 text-center">
+                                <?php echo '\('.$test['solution'].'\)'; ?>
+                            </div>
+                        </div>
+                        <div class="col-3 d-flex flex-wrap text-center">
+                            <div class="col-12">
+                                <?php $date = new DateTimeImmutable($test['submitted']); echo 'Odovzdané '.$date->format('d. m. Y H:i'); ?>
+                            </div>
+                            <div class="col-12">
+                                <?php echo 'Hodnotenie: <b>'.$test['points'].' / '.$test['points_available'].'</b>'; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php } else {?>
+                    <?php } ?>
+                    <?php //var_dump($test); ?>
                 </div>
             </div>
         </div>
