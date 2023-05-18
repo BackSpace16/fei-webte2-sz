@@ -47,7 +47,9 @@
     <!-- MathJax -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <link href="css/style.css" rel="stylesheet"/>
+    <script src="js/test.js"></script>
 </head>
 <body>
     <div class="page">
@@ -154,6 +156,22 @@
                         </div>
                     </div>
                     <?php } else {?>
+                    <div class="col-12 d-flex">
+                        <div class="col-9 d-flex">
+                            <div class="col-9 d-flex text-end">
+                                <?php echo 'Vaša odpoveď:  <div id="answer" class="ms-3"></div>'; ?>
+                            </div>
+                        </div>
+                        <div class="col-3 d-flex flex-wrap text-end">
+                            <div class="col-12">
+                                <?php echo 'Maximálny možný počet bodov: <b>'.$test['points_available'].'</b>'; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <label for="answer-field" class="mt-3 form-label">Vaša odpoveď v LaTeX:</label>
+                    <div class="col-11 input-group mb-3">
+                        <input type="text" class="form-control" id="answer-field" placeholder="\dfrac{}{}" oninput="inputTex(this)">
+                    </div>
                     <?php } ?>
                     <?php //var_dump($test); ?>
                 </div>
