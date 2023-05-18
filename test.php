@@ -14,17 +14,18 @@
 
     require_once 'config.php';
 
-    $errMessage = null;
-    $sql = "SELECT * FROM tests LEFT JOIN taskgroups ON tests.task_group = taskgroups.id WHERE tests.student = :student ORDER BY tests.created DESC";
+    $sql = "SELECT * FROM tests WHERE id = :id";
     $stmt = $pdo->prepare($sql);
 
-    $stmt->bindParam(":student", $_SESSION["id"], PDO::PARAM_STR);
+    $stmt->bindParam(":id", $_GET["t"], PDO::PARAM_STR);
 
-    if ($stmt->execute()) {
-        $tests = $stmt->fetchAll();
+    if ($stmt->execute() && $stmt->rowCount() == 1) {
+        $test = $stmt->fetch();
+        if($test['student'] != $_SESSION['id'])
+            header('Location: index.php');
     }
     else {
-        $errMessage = "Chyba v spojení s databázou.";
+        header('Location: index.php');
     }
 
 ?>
@@ -55,8 +56,8 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link active" aria-current="page">
-                        <img class="icona" src="icons/home_white.svg" width="16" height="16">
+                    <a href="index.php" class="nav-link link-dark" aria-current="page">
+                        <img class="icona" src="icons/home.svg" width="16" height="16">
                         Domov
                     </a>
                 </li>
@@ -85,8 +86,8 @@
             </a>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link active py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">
-                        <img src="icons/home_white.svg" width="24" height="24">
+                    <a href="index.php" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">
+                        <img src="icons/home.svg" width="24" height="24">
                     </a>
                 </li>
                 <li>
@@ -110,55 +111,8 @@
         <div class="content">
             <div class="d-flex justify-content-center">
                 <div class="col-sm-10 col-11">
-                    <table class="col-12">
-                        <tr class="col-12 p-3 text-center">
-                            <th class="col-3 ps-3"><h4>Test</h4></th>
-                            <th class="col-3"><h4>Hodnotenie</h4></th>
-                            <th class="col-3"><h4>Vytvorené</h4></th>
-                            <th class="col-3 pe-3"><h4>Odovzdané</h4></th>
-                        </tr>
-                    </table>
-                    <hr>
                     <?php
-                        foreach($tests as $test) {
-                            $id = $test[0];
-                            if ($test["submitted"] != null && $test["points"] != null) {
-                                echo '<a href="test.php?t='.$id.'"><div class="alert alert-dark d-flex mb-2" role="alert">
-                                        <div class="col-3 text-start">
-                                            '.$test["name"].'
-                                        </div>
-                                        <div class="col-3 text-center">
-                                            '.$test["points"].' / '.$test["points_available"].'
-                                        </div>
-                                        <div class="col-3 text-center">
-                                            '.$test["created"].'
-                                        </div>
-                                        <div class="col-3 text-center">
-                                            '.$test["submitted"].'
-                                        </div>
-                                    </div></a>';
-                            }
-                            else {
-                                echo '<a href="test.php?t='.$id.'"><div class="alert alert-success d-flex mb-2" role="alert">
-                                        <div class="col-3 text-start">
-                                            '.$test["name"].'
-                                        </div>
-                                        <div class="col-3 text-center">
-                                            Neodovzdané
-                                        </div>
-                                        <div class="col-3 text-center">
-                                            '.$test["created"].'
-                                        </div>
-                                        <div class="col-3 d-flex justify-content-center">
-                                            <div class="col-8">
-                                                <form action="test.php?t='.$id.'">
-                                                    <input type="button" class="btn btn-sm btn-primary" value="Odovzdať">
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div></a>';
-                            }
-                        }
+                        var_dump($test);
                     ?>
                 </div>
             </div>
