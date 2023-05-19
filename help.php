@@ -121,31 +121,43 @@
                 <hr>
                 <div id="contentToConvert">
                     <h5>Prihlásenie</h5>
-                    <p>Registrovaný používateľ sa prihlási pomocou emailu a hesla uvedené pri registrácii(v našom prípade už registrovaných v readME).
-                         Po úšešnom prihlásení študenta alebo učiteľa je presmerovaný do svojej časti aplikácie na základe role (podľa toho či je učiteľ alebo študent)</p>
+                    <p>Registrovaný používateľ sa prihlási pomocou emailu a hesla uvedené 
+                        pri registrácii(v našom prípade už registrovaných v readME).
+                         Po úšešnom prihlásení študenta alebo učiteľa je presmerovaný 
+                         do svojej časti aplikácie na základe role (podľa toho či je
+                          učiteľ alebo študent)</p>
                          
-                    <p>Registrovaný používateľ sa prihlási pomocou emailu a hesla uvedené pri registrácii(v našom prípade už registrovaných v readME).
-                     Po úšešnom prihlásení študenta alebo učiteľa je presmerovaný do svojej časti aplikácie na základe role (podľa toho či je učiteľ alebo študent)</p>
+                    <p>Registrovaný používateľ sa prihlási pomocou emailu a hesla 
+                        uvedené pri registrácii
+                        (v našom prípade už registrovaných v readME).
+                     Po úšešnom prihlásení študenta alebo učiteľa je presmerovaný 
+                     do svojej časti aplikácie na základe role
+                      (podľa toho či je učiteľ alebo študent)</p>
                      
                      
                      <br><h5>Návod - učiteľ</h5><br>
                      
-                     <p>Na stránke si môžete vybrať ktorého študenta zvoliť , priradiť mu úlohu ,
+                     <p>Na stránke si môžete vybrať ktorého študenta zvoliť ,
+                         priradiť mu úlohu ,
                         zadať body na ulohu . 
-                        Na bočnej lište si možete kliknu na navod , domov, alebo sa odhlasit.
+                        Na bočnej lište si možete kliknu na navod , domov,
+                         alebo sa odhlasit.
 
                     </p>
                     <p>Vo formuláre môžete nahrať subor s LaTex súbormi s príkladmi.
-                        Ďalej si može po kliknutí na zobraziť/skryť tabulku zobrazit tabulku s nahratými príkladmi so súboru.
+                        Ďalej si može po kliknutí na zobraziť/skryť tabulku 
+                        zobrazit tabulku s nahratými príkladmi so súboru.
                         Druhým kliknutím sa tabulka zatvorí.
                     </p>
                     <br><h5>Návod - študent</h5><br>
 
                     <p>Na stránke si môžete priradené úlohy od učiteľa. 
-                        Na bočnej lište si možete kliknu na navod , domov, alebo sa odhlásit.
+                        Na bočnej lište si možete kliknu na navod , domov,
+                         alebo sa odhlásit.
 
                     </p>
-                    <p>Na stránke sú zobrazené jeho úlohy. Tie ktoré niesú odovzdané môže odovzdať. Tie ktoré už sú odovzdané za tie môže
+                    <p>Na stránke sú zobrazené jeho úlohy. Tie ktoré niesú odovzdané 
+                        môže odovzdať. Tie ktoré už sú odovzdané za tie môže
                         študent vidieť dosiahnuté body
                     </p>
                         </div>
@@ -158,15 +170,37 @@
 </div>
 
   
-    <script type="text/javascript">
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const content = document.getElementById('contentToConvert').innerHTML;
-            doc.text(content, -10, 15, { 'width': 100 });
-            doc.save("newFile.pdf");               
-        }           
-    </script> 
+<script type="text/javascript">
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const contentToConvert = document.getElementById('contentToConvert');
+        const excludedTags = ['h5', 'p'];
+
+        const elements = contentToConvert.getElementsByTagName('*');
+        let textContent = '';
+
+        for (let i = 0; i < elements.length; i++) {
+            const currentTag = elements[i].tagName.toUpperCase();
+            const text = elements[i].textContent.trim();
+
+            if (!excludedTags.includes(currentTag) && text) {
+                if (textContent) {
+                    textContent += '\n'; 
+                }
+                textContent += text;
+            }
+        }
+
+        doc.text(textContent, 15, 15);
+
+        doc.save("newFile.pdf");
+    }
+</script>
+
+
+
 
 </body>
 </html>

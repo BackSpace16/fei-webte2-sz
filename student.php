@@ -83,8 +83,8 @@
             <a href="index.php" class="d-block py-3 px-1 link-dark text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Domov">
                 <img src="img/logo.png" width="64" height="30">
             </a>
-            <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-                <li class="nav-item">
+            <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">  
+            <li class="nav-item">
                     <a href="index.php" class="nav-link active py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Domov" data-bs-original-title="Domov">
                         <img src="icons/home_white.svg" width="24" height="24">
                     </a>
