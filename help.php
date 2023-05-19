@@ -120,8 +120,35 @@
                 </div>
                 <hr>
                 <div id="contentToConvert">
-                    bla bla bla tba
-                </div>
+                    <h5>Prihlásenie</h5>
+                    <p>Registrovaný používateľ sa prihlási pomocou emailu a hesla uvedené pri registrácii(v našom prípade už registrovaných v readME).
+                         Po úšešnom prihlásení študenta alebo učiteľa je presmerovaný do svojej časti aplikácie na základe role (podľa toho či je učiteľ alebo študent)</p>
+                         
+                    <p>Registrovaný používateľ sa prihlási pomocou emailu a hesla uvedené pri registrácii(v našom prípade už registrovaných v readME).
+                     Po úšešnom prihlásení študenta alebo učiteľa je presmerovaný do svojej časti aplikácie na základe role (podľa toho či je učiteľ alebo študent)</p>
+                     
+                     
+                     <br><h5>Návod - učiteľ</h5><br>
+                     
+                     <p>Na stránke si môžete vybrať ktorého študenta zvoliť , priradiť mu úlohu ,
+                        zadať body na ulohu . 
+                        Na bočnej lište si možete kliknu na navod , domov, alebo sa odhlasit.
+
+                    </p>
+                    <p>Vo formuláre môžete nahrať subor s LaTex súbormi s príkladmi.
+                        Ďalej si može po kliknutí na zobraziť/skryť tabulku zobrazit tabulku s nahratými príkladmi so súboru.
+                        Druhým kliknutím sa tabulka zatvorí.
+                    </p>
+                    <br><h5>Návod - študent</h5><br>
+
+                    <p>Na stránke si môžete priradené úlohy od učiteľa. 
+                        Na bočnej lište si možete kliknu na navod , domov, alebo sa odhlásit.
+
+                    </p>
+                    <p>Na stránke sú zobrazené jeho úlohy. Tie ktoré niesú odovzdané môže odovzdať. Tie ktoré už sú odovzdané za tie môže
+                        študent vidieť dosiahnuté body
+                    </p>
+                        </div>
                 
             </div>
         </div>
@@ -136,7 +163,7 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const content = document.getElementById('contentToConvert').innerHTML;
-            doc.text(content, 15, 15, { 'width': 170 });
+            doc.text(content, -10, 15, { 'width': 100 });
             doc.save("newFile.pdf");               
         }           
     </script> 
