@@ -330,7 +330,24 @@
                                 </option>
                             <?php endforeach; ?>
                             </select>
+                            
+                            
+                            <?php
+                                include('config.php');
+                                $sqlp = "SELECT * FROM tasks ";
+                                $stmtp = $pdo->prepare($sqlp);
+                                $stmtp->execute();
+                                $p = $stmtp->fetchAll(PDO::FETCH_ASSOC);
+                            ?>
 
+                            <!-- Generate the <select> tag with student options -->
+                            <select name="p">
+                            <?php foreach ($p as $task): ?>
+                                <option value="<?php echo $task['id']; ?>">
+                                <?php echo $task['name']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                            </select>   
 
                         <!-- Modal -->
                         <div id="modal" class="modal">
