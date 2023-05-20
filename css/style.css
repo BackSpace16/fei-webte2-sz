@@ -62,3 +62,6 @@ a {
         margin-left: 4.5rem;
     }
 }
+.form-select {
+    max-width: 200px; /* Adjust the value as needed */
+  }

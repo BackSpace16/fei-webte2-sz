@@ -247,10 +247,10 @@
                         
                        <br>
 
-                            <h3>Tabuľka príkladov: </h3>
+                            <h3>Tabuľka načítaných príkladov: </h3>
                         <button id="toggle-button" class="btn btn-primary" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
 
-                        <table id="prklady-table" style="display:none;">
+                        <table id="prklady-table" class="table" style="display:none;">
                             <thead>
                                 <tr>
                                     <th>Číslo príkladu</th>
@@ -297,23 +297,50 @@
                                         $stmtInsert->bindParam(":solution", $Mriesenie, PDO::PARAM_STR);
                                         $stmtInsert->execute();
                                     }
+
                                     
+                                }
+
+                                $query = "SELECT * FROM tasks";
+                                $stmt = $pdo->prepare($query);
+                                $stmt->execute();
+                                $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                                foreach ($tasks as $task) {
+
                                     
                                     echo "<tr>";
-                                    echo "<td>$cisloPrkladu</td>";
-                                    echo "<td class=\"mathjax-equation\">" . trim($Muloha) . "</td>";
-                                    echo "<td class=\"mathjax-equation\">" . trim($Mriesenie) . "</td>";
-                                    echo "<td class=\"image-cell\">" . ($obrazok !== 'žiadna schéma' ? "<img src=\"$obrazok\" alt=\"bloková schéma\" onclick=\"openModal('$obrazok')\">" : "žiadna schéma") . "</td>";
-                                    echo "</tr>";
+                                    echo "<td>" . $task['name'] . "</td>";
+                                    echo "<td>" . $task['description'] . "</td>";
+                                    echo "<td>" . $task['solution'] . "</td>";
+
+
                                 
-                                    
+                                    //echo '<td><img src="data:image/png;charset=utf8;base64,'.base64_encode($task['image']).'"width="88" height="31"></td>';
+                                
+
+                                    $imageData = $task['image'];
+
+                                    if (strlen($imageData) > 15) {
+                                        $base64Image = base64_encode($imageData);
+                                        echo "<td><img src='data:image/jpeg;base64," . $base64Image . "' alt='Task Image' width='120' height='50'></td>";
+                                    } else {
+                                        echo "<td>Žiadna schéma</td>";
+                                    }
+                        
+
+
+                                    echo "</tr>";
                                 }
                                 //unset($stmt);
                                 ?>
                             </tbody>
                         </table>
+                        <h3>Pridenie úlohy študentovi</h3>
                         <?php
                             include('config.php');
+
+                            
 
                             // Select all students from the users table with the role "Student"
                             $sqlStudents = "SELECT * FROM users WHERE name = 'Študent'";
@@ -323,15 +350,17 @@
                             ?>
 
                             <!-- Generate the <select> tag with student options -->
-                            <select name="student">
+                            <div class="row">
+                            <div class="column">
+                            <select class="form-select" name="student">
                             <?php foreach ($students as $student): ?>
                                 <option value="<?php echo $student['id']; ?>">
                                 <?php echo $student['username']; ?>
                                 </option>
                             <?php endforeach; ?>
                             </select>
-                            
-                            
+                            </div>
+                            <div class="column">
                             <?php
                                 include('config.php');
                                 $sqlp = "SELECT * FROM tasks ";
@@ -341,13 +370,19 @@
                             ?>
 
                             <!-- Generate the <select> tag with student options -->
-                            <select name="p">
+                            <select class="form-select" name="p">
                             <?php foreach ($p as $task): ?>
                                 <option value="<?php echo $task['id']; ?>">
                                 <?php echo $task['name']; ?>
                                 </option>
                             <?php endforeach; ?>
-                            </select>   
+                            </select> 
+                            </div>
+                            <div class="column">
+                            <button  class="btn btn-primary">Priraď úlohu</button>
+                            </div>
+
+                            </div>
 
                         <!-- Modal -->
                         <div id="modal" class="modal">
