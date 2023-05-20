@@ -18,6 +18,7 @@
     $stmt = $pdo->prepare($sql);
 
     $stmt->bindParam(":id", $_GET["t"], PDO::PARAM_STR);
+    $test_id = $_GET["t"];
 
     if ($stmt->execute() && $stmt->rowCount() == 1) {
         $test = $stmt->fetch();
@@ -168,10 +169,18 @@
                             </div>
                         </div>
                     </div>
-                    <label for="answer-field" class="mt-3 form-label">Vaša odpoveď v LaTeX:</label>
-                    <div class="col-11 input-group mb-3">
-                        <input type="text" class="form-control" id="answer-field" placeholder="\dfrac{}{}" oninput="inputTex(this)">
-                    </div>
+                    <form action="submit.php" method="post">
+                        <label for="answer-field" class="mt-3 form-label">Vaša odpoveď v LaTeX:</label>
+                        <div class="d-flex">
+                            <div class="input-group w-75 mb-3 me-3">
+                                <input type="hidden" name="test" value="<?php echo($test_id); ?>">
+                                <input type="text" class="form-control" id="answer-field" name="answer" placeholder="\dfrac{}{}" oninput="inputTex(this)">
+                            </div>
+                            <div class="col-3">
+                                <input type="submit" class="btn btn-primary" id="answer-submit" value="Odovzdať">
+                            </div>
+                        </div>
+                    </form>
                     <?php } ?>
                     <?php //var_dump($test); ?>
                 </div>
