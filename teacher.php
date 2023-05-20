@@ -384,11 +384,95 @@
 
                             </div>
 
+
+
+                                                        <?php
+                            // Assuming you have established a database connection
+                            include('config.php');
+
+                            // SQL query to fetch data from both tables using JOIN
+                            $query = "SELECT t.id AS id, u.id AS student, u.username, t.task, t.points
+                                    FROM users u
+                                    JOIN tests t ON u.id = t.student";
+
+                            // Execute the query
+                            $result = $pdo->query($query);
+
+                            // Check if the query was successful
+                            if ($result) {
+                                // Start creating the HTML table
+                                echo "<table>";
+                                echo "<tr><th>Test ID</th><th>Student ID</th><th>username</th><th>Task</th><th>Points</th></tr>";
+
+                                // Fetch and display the data
+                                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row['id'] . "</td>";
+                                    echo "<td>" . $row['student'] . "</td>";
+                                    echo "<td>" . $row['username'] . "</td>";
+                                    echo "<td>" . $row['task'] . "</td>";
+                                    echo "<td>" . $row['points'] . "</td>";
+                                    echo "</tr>";
+                                }
+
+                                // Close the HTML table
+                                echo "</table>";
+
+
+                                if (isset($_POST['download_csv'])) {
+                                    $filename = 'table_data.csv';
+                            
+                                    // Set appropriate headers for CSV file download
+                                    header('Content-Type: text/csv');
+                                    header('Content-Disposition: attachment; filename="' . $filename . '"');
+                            
+                                    // Create the file handle
+                                    $file = fopen('php://output', 'w');
+                            
+                                    // Write the table headers to the CSV file
+                                    fputcsv($file, ['Test ID', 'Student ID', 'Surname', 'Task', 'Points']);
+                            
+                                    // Rewind the database result set
+                                    $result->execute();
+                            
+                                    // Fetch and write each row to the CSV file
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                        fputcsv($file, $row);
+                                    }
+                            
+                                    // Close the file handle
+                                    fclose($file);
+                            
+                                    // Terminate the script to prevent further output
+                                    exit();
+                                }
+                            
+                                // Display the download button
+                                echo '<form method="post">';
+                                echo '<button type="submit" name="download_csv">Download CSV</button>';
+                                echo '</form>';
+
+
+
+                            } else {
+                                // Handle the error if the query fails
+                                echo "Error: " . $pdo->errorInfo()[2];
+                            }
+
+                            // Close the database connection
+                            $pdo = null;
+                            ?>
+
+
+
                         <!-- Modal -->
                         <div id="modal" class="modal">
                             <span class="close" onclick="closeModal()">&times;</span>
                             <img class="modal-content" id="modal-image">
                         </div>
+
+
+
 
                         <script>
                             // MathJax configuration and rendering
