@@ -434,7 +434,7 @@
                             include('config.php');
 
                
-                            $query = "SELECT t.id AS id, u.id AS student, u.username, t.task, t.points
+                            $query = "SELECT t.id AS id, u.id AS student, u.username, t.task, t.points , t.created, t.submitted
                                     FROM users u
                                     JOIN tests t ON u.id = t.student";
 
@@ -444,7 +444,7 @@
                             if ($result) {
       
                                 echo "<table>";
-                                echo "<tr><th>Test ID</th><th>Student ID</th><th>username</th><th>Task</th><th>Points</th></tr>";
+                                echo "<tr><th>Test ID</th><th>Student ID</th><th>Meno</th><th>Uloha</th><th>Body</th><th>Vytvorené</th><th>Odovzdané</th></tr>";
 
      
                                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
@@ -454,6 +454,8 @@
                                     echo "<td>" . $row['username'] . "</td>";
                                     echo "<td>" . $row['task'] . "</td>";
                                     echo "<td>" . $row['points'] . "</td>";
+                                    echo "<td>" . $row['created'] . "</td>";
+                                    echo "<td>" . $row['submitted'] . "</td>";
                                     echo "</tr>";
                                 }
 
