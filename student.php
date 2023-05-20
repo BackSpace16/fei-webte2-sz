@@ -110,6 +110,9 @@
         <div class="content">
             <div class="d-flex justify-content-center">
                 <div class="col-sm-10 col-11">
+                    <div class="mb-3 col-3">
+                        <form action="newtest.php"><input class="btn btn-lg btn-success" type="submit" value="Vygenerovať nový test"></form>
+                    </div>
                     <table class="col-12">
                         <tr class="col-12 p-3 text-center">
                             <th class="col-3 ps-3"><h4>Test</h4></th>
@@ -122,7 +125,7 @@
                     <?php
                         foreach($tests as $test) {
                             $id = $test[0];
-                            if ($test["submitted"] != null && $test["points"] != null) {
+                            if ($test["submitted"] != null && $test["points"] != "null") {
                                 echo '<a href="test.php?t='.$id.'"><div class="alert alert-dark d-flex mb-2" role="alert">
                                         <div class="col-3 text-start">
                                             '.$test["name"].'

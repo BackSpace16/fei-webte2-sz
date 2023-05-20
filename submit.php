@@ -29,14 +29,16 @@
         $sql = "UPDATE tests SET submitted = :submitted, students_solution = :solution, points = :points WHERE tests.id = :id";
         $stmt = $pdo->prepare($sql);
         $date = date("Y-m-d H:i:s");
-
-        if($_POST["answer"] == "")
+        $answer = $_POST["answer"];
+        if($answer == "" || $answer == null) {
+            $answer = "-";
             $points = 0;
+        }
         else
             $points = 10;
 
         $stmt->bindParam(":submitted", $date, PDO::PARAM_STR);
-        $stmt->bindParam(":solution", $_POST["answer"], PDO::PARAM_STR);
+        $stmt->bindParam(":solution", $answer, PDO::PARAM_STR);
         $stmt->bindParam(":points", $points, PDO::PARAM_STR);
         $stmt->bindParam(":id", $_POST["test"], PDO::PARAM_STR);
 

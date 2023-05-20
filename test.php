@@ -131,7 +131,7 @@
                         echo '<div class="d-flex justify-content-center"><img src="data:image/png;charset=utf8;base64,'.base64_encode($test['image']).'" alt=""></div>';
                     ?>
                     <hr>
-                    <?php if($test['submitted'] != null && $test['points'] != null){?>
+                    <?php if($test['submitted'] != null && $test['points'] != "null"){?>
                     <div class="d-flex">
                         <div class="col-9 d-flex">
                             <div class="col-2 text-end">
