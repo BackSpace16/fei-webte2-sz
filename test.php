@@ -8,9 +8,6 @@
     if (!isset($_SESSION['id'])) {
         header('Location: index.php');
     }
-    if ($_SESSION['is_teacher']) {
-        header('Location: teacher.php');
-    }
 
     require_once 'config.php';
 

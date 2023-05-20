@@ -235,17 +235,37 @@
                        
                        <div class="row">
                         <h3>Nahratie súboru:</h3>
-                            <div class="col-sm">
                             <form method="POST" enctype="multipart/form-data">
-                            <!-- <label for="file">Select a file:</label> -->
-                            <input type="file" class="form-control" id="file" name="uploaded_file" required>
+                            <div class="col-sm d-flex">
+                                <div class="col-6">
+                                    <label for="file">Názov testu:</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="col-6">
+                                    <label for="file">Dosiahnuteľný počet bodov:</label>
+                                    <input type="number" class="form-control" id="points" name="points" required>
+                                </div>
+                            </div>
+                            <div class="col-sm d-flex mt-3">
+                                <div class="col-6">
+                                    <label for="file">Dostupné od:</label>
+                                    <input type="datetime-local" class="form-control" id="datetime-from" name="datetime-from">
+                                </div>
+                                <div class="col-6">
+                                    <label for="file">Dostupné do:</label>
+                                    <input type="datetime-local" class="form-control" id="datetime-to" name="datetime-to">
+                                </div>
+                            </div>
+                            <label for="file" class="mt-3">LaTeX súbor:</label>
+                            <div class="col-sm d-flex">
+                                <input type="file" class="form-control" id="file" name="uploaded_file" required>
+                                <button type="submit" class="col-2 btn btn-primary">Nahrať súbor</button>
                             </div>
                             <div class="col-sm">
-                            <button type="submit" class="btn btn-primary">Nahrať súbor</button>
                             </div>
                        </div>
                         
-                       <br>
+                       <hr>
 
                             <h3>Tabuľka načítaných príkladov: </h3>
                         <button id="toggle-button" class="btn btn-primary" onclick="toggleTable()">Zobraziť / Skryť tabuľku</button>
@@ -262,6 +282,24 @@
                             <tbody>
                                 <?php
                                 include('config.php');
+
+                                if($_POST['name'] != null) {
+                                    $sqlInsert = "INSERT INTO taskgroups (name, open, close, points_available) VALUES (:name, :open, :close, :points)";
+
+                                    $stmtInsert = $pdo->prepare($sqlInsert);
+                                    $name = $_POST['name'];
+                                    $open = $_POST['datetime-from'];
+                                    $close = $_POST['datetime-to'];
+                                    $points = $_POST['points'];
+
+                                    $stmtInsert->bindParam(":name", $name, PDO::PARAM_STR);
+                                    $stmtInsert->bindParam(":open", $open, PDO::PARAM_STR);
+                                    $stmtInsert->bindParam(":close", $close, PDO::PARAM_STR);
+                                    $stmtInsert->bindParam(":points", $points, PDO::PARAM_STR);
+                                    $stmtInsert->execute();
+
+                                    $groupId = $pdo->lastInsertId();
+                                }
                                 // Prechádzanie cez všetky nájdené príklady
                                 foreach ($vzorce as $index => $prklad) {
                                     $cisloPrkladu = $prklad['subor'];
@@ -296,9 +334,14 @@
                                         $stmtInsert->bindParam(":image", $obrazok, PDO::PARAM_STR);
                                         $stmtInsert->bindParam(":solution", $Mriesenie, PDO::PARAM_STR);
                                         $stmtInsert->execute();
-                                    }
-
-                                    
+                                        $id = $pdo->lastInsertId();
+                                        
+                                        $sqlInsert = "INSERT INTO testgroups (testgroup, task) VALUES (:testgroup, :task)";
+                                        $stmtInsert = $pdo->prepare($sqlInsert);
+                                        $stmtInsert->bindParam(":testgroup", $groupId, PDO::PARAM_STR);
+                                        $stmtInsert->bindParam(":task", $id, PDO::PARAM_STR);
+                                        $stmtInsert->execute();
+                                    }                                    
                                 }
 
                                 $query = "SELECT * FROM tasks";
