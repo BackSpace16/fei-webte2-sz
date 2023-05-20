@@ -61,7 +61,25 @@
                     </a>
                 </li>
             </ul>
-            
+            <?php
+            require_once 'config.php';
+
+            $sqlteachers = "SELECT * FROM users ";
+                            $stmtteachers = $pdo->prepare($sqlteachers);
+                            $stmtteachers->execute();
+                            $teachers = $stmtteachers->fetchAll(PDO::FETCH_ASSOC);
+                            foreach($teachers as $teacher){
+                                if (($_SESSION['id']) == $teacher['id']) {                    
+                                    echo '<div>
+                                        <div>
+                                            
+                                            <p  style="color: black; font-size: 16px; font-weight: bold;">'. $teacher['username'] .'</p>
+                                        </div>
+                                    </div>';
+                                }
+                            }
+                
+            ?>
             <?php
                 if (isset($_SESSION['id'])) {                    
                     echo '<div>
