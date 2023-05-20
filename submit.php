@@ -23,13 +23,13 @@
     if ($stmt->execute() && $stmt->rowCount() == 1) {
         $test = $stmt->fetch();
         if($test['submitted'] == null || $test['points'] == null)
-            //header('Location: index.php');
+            header('Location: index.php');
 
             
         $sql = "UPDATE tests SET submitted = :submitted, students_solution = :solution, points = :points WHERE tests.id = :id";
         $stmt = $pdo->prepare($sql);
         $date = date("Y-m-d H:i:s");
-        
+
         if($_POST["answer"] == "")
             $points = 0;
         else
